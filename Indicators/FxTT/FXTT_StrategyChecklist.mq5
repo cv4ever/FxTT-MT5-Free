@@ -9,7 +9,7 @@
 #property strict
 #property indicator_chart_window
 
-//#property script_show_inputs
+#property script_show_inputs
 #property indicator_plots               0
 #property indicator_buffers             0
 #property indicator_minimum             0.0
@@ -63,8 +63,8 @@ class CPanelDialog : public CAppDialog
   {
 private:
    CCheckGroup       m_check_group;
+   bool              m_checks_array[NUM_CHECKS];
 public:
-   bool              ChecksArray[NUM_CHECKS];
                      CPanelDialog(void);
                     ~CPanelDialog(void);
    //--- Create
@@ -77,6 +77,7 @@ public:
 
    //--- Create dependent controls
    bool              InitializeCheckGroupControls(void);
+   bool              InitCheckGroupItems(void);
 
    void              SaveChecklistState(void);
    void              LoadChecklistState(void);
@@ -114,31 +115,40 @@ void CPanelDialog::OnChangeCheckGroup(void)
   {
    for(int i = 0; i < NUM_CHECKS; ++i)
      {
-      ChecksArray[i] = m_check_group.Check(i);
+      m_checks_array[i] = m_check_group.Check(i);
      }
   }
 //+------------------------------------------------------------------+
 bool CPanelDialog::InitializeCheckGroupControls(void)
   {
-   int x1 = 10;
-   int y1 = 10;
-   int x2 = 320;
-   int y2 = CalculateWindowHeight(CountNonEmptyChecklistItems());
+   // Define the positions and dimensions of the check group control
+   const int x1 = 10, y1 = 10;
+   const int x2 = 320, y2 = CalculateWindowHeight(CountNonEmptyChecklistItems());
 
-   if(!m_check_group.Create(m_chart_id, TAG+m_name + "CheckGroup", m_subwin, x1, y1, x2, y2))
+   // Create the check group control
+   if(!m_check_group.Create(m_chart_id, TAG + m_name + "CheckGroup", m_subwin, x1, y1, x2, y2))
       return(false);
 
+   // Attach the check group control to the dialog
    if(!Add(m_check_group))
       return(false);
 
+   // Initialize the check group items
+   if(!InitCheckGroupItems())
+      return(false);
+
+   return(true);
+  }
+//+------------------------------------------------------------------+
+bool CPanelDialog::InitCheckGroupItems(void)
+  {
    string checks[NUM_CHECKS];
    GetChecklistStrings(checks);
-
    for(int i = 0; i < NUM_CHECKS; ++i)
      {
       if(StringLen(checks[i]) > 0)
         {
-         int id = 1 << i; // Or use another way to assign unique IDs
+         int id = 1 << i;
          if(!m_check_group.AddItem(checks[i], id))
             return(false);
         }
@@ -156,7 +166,7 @@ void CPanelDialog::SaveChecklistState()
       Print("Failed to open the file, error: " + (string) GetLastError());
    else
      {
-      if(!FileWriteArray(handle, ChecksArray))
+      if(!FileWriteArray(handle, m_checks_array))
          Print("Failed to write to the file, error: " + (string)GetLastError());
       FileClose(handle);
      }
@@ -173,13 +183,13 @@ void CPanelDialog::LoadChecklistState()
       Print("File open failed, error: " + (string) GetLastError());
    else
      {
-      if(!FileReadArray(file_handle, ChecksArray))
+      if(!FileReadArray(file_handle, m_checks_array))
          Print("Failed to read from the file, error: " + (string) GetLastError());
       FileClose(file_handle);
 
       for(int i=0; i<NUM_CHECKS; i++)
         {
-         m_check_group.Check(i, ChecksArray[i]);
+         m_check_group.Check(i, m_checks_array[i]);
         }
      }
   }
@@ -252,13 +262,13 @@ int CountNonEmptyChecklistItems()
    string checks[NUM_CHECKS];
    GetChecklistStrings(checks);
 
-   int dy = 0;
+   int count = 0;
    for(int i = 0; i < NUM_CHECKS; ++i)
      {
       if(StringLen(checks[i]) > 0)
-         dy++;
+         count++;
      }
-   return dy;
+   return count;
   }
 //+------------------------------------------------------------------+
 void GetChecklistStrings(string &arr[])
@@ -303,5 +313,4 @@ Position CalculateDialogPosition(const Dimension& dialogDim, const Dimension& ch
      }
    return dialogPos;
   }
-//+------------------------------------------------------------------+
 //+------------------------------------------------------------------+
