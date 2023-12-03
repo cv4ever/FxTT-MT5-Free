@@ -48,7 +48,6 @@ struct Dimension
   {
    int               width, height;
   };
-
 struct Position
   {
    int               x, y;
@@ -65,32 +64,16 @@ class CPanelDialog : public CAppDialog
 private:
    CCheckGroup       m_check_group;
 public:
-   bool ChecksArray[NUM_CHECKS];
-   bool              chk01;
-   bool              chk02;
-   bool              chk03;
-   bool              chk04;
-   bool              chk05;
-   bool              chk06;
-   bool              chk07;
-   bool              chk08;
-   bool              chk09;
-   bool              chk10;
-   bool              chk11;
-   bool              chk12;
-   bool              chk13;
-   bool              chk14;
-   bool              chk15;
-   bool              chk16;
-   bool              chk17;
-   bool              chk18;
-   bool              chk19;
-   bool              chk20;
-
+   bool              ChecksArray[NUM_CHECKS];
                      CPanelDialog(void);
                     ~CPanelDialog(void);
    //--- Create
    virtual bool      Create(const long chart, const string name, const int subwin, const int x1, const int y1, const int x2, const int y2);
+   //--- chart event handler
+   virtual bool      OnEvent(const int id,const long &lparam,const double &dparam,const string &sparam);
+
+   //--- handlers of the dependent controls events
+   void              OnChangeCheckGroup(void);
 
    //--- Create dependent controls
    bool              InitializeCheckGroupControls(void);
@@ -99,12 +82,13 @@ public:
    void              LoadChecklistState(void);
   };
 //+------------------------------------------------------------------+
-CPanelDialog::CPanelDialog(void) :
-   chk01(false), chk02(false), chk03(false), chk04(false),
-   chk05(false), chk06(false), chk07(false), chk08(false),
-   chk09(false), chk10(false), chk11(false), chk12(false),
-   chk13(false), chk14(false), chk15(false), chk16(false),
-   chk17(false), chk18(false), chk19(false), chk20(false)
+//| Event Handling                                                   |
+//+------------------------------------------------------------------+
+EVENT_MAP_BEGIN(CPanelDialog)
+ON_EVENT(ON_CHANGE,m_check_group,OnChangeCheckGroup)
+EVENT_MAP_END(CAppDialog)
+//+------------------------------------------------------------------+
+CPanelDialog::CPanelDialog(void)
   {
   }
 //+------------------------------------------------------------------+
@@ -123,28 +107,15 @@ bool CPanelDialog::Create(const long chart, const string name, const int subwin,
 
    LoadChecklistState();
 
-   m_check_group.Check(0, chk01);
-   m_check_group.Check(1, chk02);
-   m_check_group.Check(2, chk03);
-   m_check_group.Check(3, chk04);
-   m_check_group.Check(4, chk05);
-   m_check_group.Check(5, chk06);
-   m_check_group.Check(6, chk07);
-   m_check_group.Check(7, chk08);
-   m_check_group.Check(8, chk09);
-   m_check_group.Check(9, chk10);
-   m_check_group.Check(10, chk11);
-   m_check_group.Check(11, chk12);
-   m_check_group.Check(12, chk13);
-   m_check_group.Check(13, chk14);
-   m_check_group.Check(14, chk15);
-   m_check_group.Check(15, chk16);
-   m_check_group.Check(16, chk17);
-   m_check_group.Check(17, chk18);
-   m_check_group.Check(18, chk19);
-   m_check_group.Check(19, chk20);
-
    return(true);
+  }
+//+------------------------------------------------------------------+
+void CPanelDialog::OnChangeCheckGroup(void)
+  {
+   for(int i = 0; i < NUM_CHECKS; ++i)
+     {
+      ChecksArray[i] = m_check_group.Check(i);
+     }
   }
 //+------------------------------------------------------------------+
 bool CPanelDialog::InitializeCheckGroupControls(void)
@@ -165,22 +136,18 @@ bool CPanelDialog::InitializeCheckGroupControls(void)
 
    for(int i = 0; i < NUM_CHECKS; ++i)
      {
-      if(StringLen(checks[i]) > 0 && !m_check_group.AddItem(checks[i], 1 << i))
-         return(false);
+      if(StringLen(checks[i]) > 0)
+        {
+         int id = 1 << i; // Or use another way to assign unique IDs
+         if(!m_check_group.AddItem(checks[i], id))
+            return(false);
+        }
      }
    return(true);
   }
 //+------------------------------------------------------------------+
 void CPanelDialog::SaveChecklistState()
   {
-   bool arr[20] =
-     {
-      chk01, chk02, chk03, chk04, chk05,
-      chk06, chk07, chk08, chk09, chk10,
-      chk11, chk12, chk13, chk14, chk15,
-      chk16, chk17, chk18, chk19, chk20
-     };
-
    string path = DataDirectoryName + "//" + Symbol() + DataFileName;
    ResetLastError();
 
@@ -189,7 +156,7 @@ void CPanelDialog::SaveChecklistState()
       Print("Failed to open the file, error: " + (string) GetLastError());
    else
      {
-      if(!FileWriteArray(handle, arr))
+      if(!FileWriteArray(handle, ChecksArray))
          Print("Failed to write to the file, error: " + (string)GetLastError());
       FileClose(handle);
      }
@@ -197,7 +164,6 @@ void CPanelDialog::SaveChecklistState()
 //+------------------------------------------------------------------+
 void CPanelDialog::LoadChecklistState()
   {
-   bool arr[NUM_CHECKS];
    string path = DataDirectoryName + "//" + Symbol() + DataFileName;
 
    ResetLastError();
@@ -207,32 +173,14 @@ void CPanelDialog::LoadChecklistState()
       Print("File open failed, error: " + (string) GetLastError());
    else
      {
-      if(!FileReadArray(file_handle, arr))
+      if(!FileReadArray(file_handle, ChecksArray))
          Print("Failed to read from the file, error: " + (string) GetLastError());
-      else
-        {
-         chk01 = arr[0];
-         chk02 = arr[1];
-         chk03 = arr[2];
-         chk04 = arr[3];
-         chk05 = arr[4];
-         chk06 = arr[5];
-         chk07 = arr[6];
-         chk08 = arr[7];
-         chk09 = arr[8];
-         chk10 = arr[9];
-         chk11 = arr[10];
-         chk12 = arr[11];
-         chk13 = arr[12];
-         chk14 = arr[13];
-         chk15 = arr[14];
-         chk16 = arr[15];
-         chk17 = arr[16];
-         chk18 = arr[17];
-         chk19 = arr[18];
-         chk20 = arr[19];
-        }
       FileClose(file_handle);
+
+      for(int i=0; i<NUM_CHECKS; i++)
+        {
+         m_check_group.Check(i, ChecksArray[i]);
+        }
      }
   }
 //+------------------------------------------------------------------+
@@ -328,9 +276,9 @@ void GetChecklistStrings(string &arr[])
 //+------------------------------------------------------------------+
 int CalculateWindowHeight(int numberOfCheckboxes)
   {
-   int checkboxHeight = 19;
-   int padding = 3;
-   int topAndBottomMargin = 10;
+   const int checkboxHeight = 19;
+   const int padding = 3;
+   const int topAndBottomMargin = 10;
 
    int windowHeight = (numberOfCheckboxes * checkboxHeight) + topAndBottomMargin;
    return windowHeight;
@@ -338,20 +286,20 @@ int CalculateWindowHeight(int numberOfCheckboxes)
 //+------------------------------------------------------------------+
 Position CalculateDialogPosition(const Dimension& dialogDim, const Dimension& chartDim)
   {
-   Position dialogPos = {20, 20}; // Default values
+   const int margin = 20;
+   Position dialogPos = {margin, margin}; // Default values are for CORNER_LEFT_UPPER
    switch(Location)
      {
       case CORNER_RIGHT_UPPER:
-         dialogPos.x = chartDim.width - dialogDim.width - 20;
+         dialogPos.x = chartDim.width - dialogDim.width - margin;
          break;
       case CORNER_LEFT_LOWER:
-         dialogPos.y = chartDim.height - dialogDim.height - 20;
+         dialogPos.y = chartDim.height - dialogDim.height - margin;
          break;
       case CORNER_RIGHT_LOWER:
-         dialogPos.x = chartDim.width - dialogDim.width - 20;
-         dialogPos.y = chartDim.height - dialogDim.height - 20;
+         dialogPos.x = chartDim.width - dialogDim.width - margin;
+         dialogPos.y = chartDim.height - dialogDim.height - margin;
          break;
-         // No default needed as dialogPos is initialized
      }
    return dialogPos;
   }
