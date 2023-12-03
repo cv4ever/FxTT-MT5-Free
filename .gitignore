@@ -503,3 +503,4 @@ Scripts/UnitTests/Generic/TestStack.mq5
 Scripts/UnitTests/Stat/TestStat.mq5
 Scripts/UnitTests/Stat/TestStatBenchmark.mq5
 Scripts/UnitTests/Stat/TestStatPrecision.mq5
+*.bin
