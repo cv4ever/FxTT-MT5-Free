@@ -150,14 +150,16 @@ bool CPanelDialog::CreateCheckGroup(void)
       int y1=INDENT_TOP;
       int x2=x1+GROUP_WIDTH;
       int y2=y1+GROUP_HEIGHT;
+
    //--- create
       if(!m_check_group.Create(m_chart_id,m_name+"CheckGroup",m_subwin,x1,y1,x2,y2))
          return(false);
       if(!Add(m_check_group))
          return(false);
+
    //--- fill out with strings
       if(!m_check_group.AddItem("Mail if Trade event",1<<0))
-      */
+   */
 
    if(!m_check_group.Create(m_chart_id, m_name + "CheckGroup", m_subwin, 0, 0, 112, 170))
       return (false);
@@ -211,181 +213,88 @@ void CPanelDialog::OnChangeCheckGroup(void)
    DrawIndicatorsData();
   }
 //+------------------------------------------------------------------+
-//|                                                                  |
+void DrawIndicator(bool tfEnabled, int idx1, int idx2, int idx3, string objPrefix)
+  {
+   if(tfEnabled)
+     {
+      PlotIndexSetInteger(idx1, PLOT_DRAW_TYPE, DRAW_LINE);
+      PlotIndexSetInteger(idx2, PLOT_DRAW_TYPE, DRAW_LINE);
+      PlotIndexSetInteger(idx3, PLOT_DRAW_TYPE, DRAW_LINE);
+     }
+   else
+     {
+      PlotIndexSetInteger(idx1, PLOT_DRAW_TYPE, DRAW_NONE);
+      PlotIndexSetInteger(idx2, PLOT_DRAW_TYPE, DRAW_NONE);
+      PlotIndexSetInteger(idx3, PLOT_DRAW_TYPE, DRAW_NONE);
+      ObjectsDeleteAll(ChartID(), objPrefix);
+     }
+  }
 //+------------------------------------------------------------------+
 void CPanelDialog::DrawIndicatorsData()
   {
-   if(mMN1)
-     {
-      PlotIndexSetInteger(0, PLOT_DRAW_TYPE, DRAW_LINE);
-      PlotIndexSetInteger(1, PLOT_DRAW_TYPE, DRAW_LINE);
-      PlotIndexSetInteger(2, PLOT_DRAW_TYPE, DRAW_LINE);
-     }
-   else
-     {
-      PlotIndexSetInteger(0, PLOT_DRAW_TYPE, DRAW_NONE);
-      PlotIndexSetInteger(1, PLOT_DRAW_TYPE, DRAW_NONE);
-      PlotIndexSetInteger(2, PLOT_DRAW_TYPE, DRAW_NONE);
-      ObjectsDeleteAll(ChartID(), "BBMN");
-     }
-
-   if(mW1)
-     {
-      PlotIndexSetInteger(3, PLOT_DRAW_TYPE, DRAW_LINE);
-      PlotIndexSetInteger(4, PLOT_DRAW_TYPE, DRAW_LINE);
-      PlotIndexSetInteger(5, PLOT_DRAW_TYPE, DRAW_LINE);
-     }
-   else
-     {
-      PlotIndexSetInteger(3, PLOT_DRAW_TYPE, DRAW_NONE);
-      PlotIndexSetInteger(4, PLOT_DRAW_TYPE, DRAW_NONE);
-      PlotIndexSetInteger(5, PLOT_DRAW_TYPE, DRAW_NONE);
-      ObjectsDeleteAll(ChartID(), "BBW1");
-     }
-
-   if(mD1)
-     {
-      PlotIndexSetInteger(6, PLOT_DRAW_TYPE, DRAW_LINE);
-      PlotIndexSetInteger(7, PLOT_DRAW_TYPE, DRAW_LINE);
-      PlotIndexSetInteger(8, PLOT_DRAW_TYPE, DRAW_LINE);
-     }
-   else
-     {
-      PlotIndexSetInteger(6, PLOT_DRAW_TYPE, DRAW_NONE);
-      PlotIndexSetInteger(7, PLOT_DRAW_TYPE, DRAW_NONE);
-      PlotIndexSetInteger(8, PLOT_DRAW_TYPE, DRAW_NONE);
-      ObjectsDeleteAll(ChartID(), "BBD1");
-     }
-
-   if(mH4)
-     {
-      PlotIndexSetInteger(9, PLOT_DRAW_TYPE, DRAW_LINE);
-      PlotIndexSetInteger(10, PLOT_DRAW_TYPE, DRAW_LINE);
-      PlotIndexSetInteger(11, PLOT_DRAW_TYPE, DRAW_LINE);
-     }
-   else
-     {
-      PlotIndexSetInteger(9, PLOT_DRAW_TYPE, DRAW_NONE);
-      PlotIndexSetInteger(10, PLOT_DRAW_TYPE, DRAW_NONE);
-      PlotIndexSetInteger(11, PLOT_DRAW_TYPE, DRAW_NONE);
-      ObjectsDeleteAll(ChartID(), "BBH4");
-     }
-
-   if(mH1)
-     {
-      PlotIndexSetInteger(12, PLOT_DRAW_TYPE, DRAW_LINE);
-      PlotIndexSetInteger(13, PLOT_DRAW_TYPE, DRAW_LINE);
-      PlotIndexSetInteger(14, PLOT_DRAW_TYPE, DRAW_LINE);
-     }
-   else
-     {
-      PlotIndexSetInteger(12, PLOT_DRAW_TYPE, DRAW_NONE);
-      PlotIndexSetInteger(13, PLOT_DRAW_TYPE, DRAW_NONE);
-      PlotIndexSetInteger(14, PLOT_DRAW_TYPE, DRAW_NONE);
-      ObjectsDeleteAll(ChartID(), "BBH1");
-     }
-
-   if(mM30)
-     {
-      PlotIndexSetInteger(15, PLOT_DRAW_TYPE, DRAW_LINE);
-      PlotIndexSetInteger(16, PLOT_DRAW_TYPE, DRAW_LINE);
-      PlotIndexSetInteger(17, PLOT_DRAW_TYPE, DRAW_LINE);
-     }
-   else
-     {
-      PlotIndexSetInteger(15, PLOT_DRAW_TYPE, DRAW_NONE);
-      PlotIndexSetInteger(16, PLOT_DRAW_TYPE, DRAW_NONE);
-      PlotIndexSetInteger(17, PLOT_DRAW_TYPE, DRAW_NONE);
-      ObjectsDeleteAll(ChartID(), "BBM30");
-     }
-
-   if(mM15)
-     {
-      PlotIndexSetInteger(18, PLOT_DRAW_TYPE, DRAW_LINE);
-      PlotIndexSetInteger(19, PLOT_DRAW_TYPE, DRAW_LINE);
-      PlotIndexSetInteger(20, PLOT_DRAW_TYPE, DRAW_LINE);
-     }
-   else
-     {
-      PlotIndexSetInteger(18, PLOT_DRAW_TYPE, DRAW_NONE);
-      PlotIndexSetInteger(19, PLOT_DRAW_TYPE, DRAW_NONE);
-      PlotIndexSetInteger(20, PLOT_DRAW_TYPE, DRAW_NONE);
-      ObjectsDeleteAll(ChartID(), "BBM15");
-     }
-
-   if(mM5)
-     {
-      PlotIndexSetInteger(21, PLOT_DRAW_TYPE, DRAW_LINE);
-      PlotIndexSetInteger(22, PLOT_DRAW_TYPE, DRAW_LINE);
-      PlotIndexSetInteger(23, PLOT_DRAW_TYPE, DRAW_LINE);
-     }
-   else
-     {
-      PlotIndexSetInteger(21, PLOT_DRAW_TYPE, DRAW_NONE);
-      PlotIndexSetInteger(22, PLOT_DRAW_TYPE, DRAW_NONE);
-      PlotIndexSetInteger(23, PLOT_DRAW_TYPE, DRAW_NONE);
-      ObjectsDeleteAll(ChartID(), "BBM5");
-     }
-
-   if(mM1)
-     {
-      PlotIndexSetInteger(24, PLOT_DRAW_TYPE, DRAW_LINE);
-      PlotIndexSetInteger(25, PLOT_DRAW_TYPE, DRAW_LINE);
-      PlotIndexSetInteger(26, PLOT_DRAW_TYPE, DRAW_LINE);
-     }
-   else
-     {
-      PlotIndexSetInteger(24, PLOT_DRAW_TYPE, DRAW_NONE);
-      PlotIndexSetInteger(25, PLOT_DRAW_TYPE, DRAW_NONE);
-      PlotIndexSetInteger(26, PLOT_DRAW_TYPE, DRAW_NONE);
-      ObjectsDeleteAll(ChartID(), "BBM1");
-     }
+   DrawIndicator(mMN1, 0, 1, 2, "BBMN");
+   DrawIndicator(mW1, 3, 4, 5, "BBW1");
+   DrawIndicator(mD1, 6, 7, 8, "BBD1");
+   DrawIndicator(mH4, 9, 10, 11, "BBH4");
+   DrawIndicator(mH1, 12, 13, 14, "BBH1");
+   DrawIndicator(mM30, 15, 16, 17, "BBM30");
+   DrawIndicator(mM15, 18, 19, 20, "BBM15");
+   DrawIndicator(mM5, 21, 22, 23, "BBM5");
+   DrawIndicator(mM1, 24, 25, 26, "BBM1");
 
    DrawLabels();
   }
-//+------------------------------------------------------------------+
-//|                                                                  |
 //+------------------------------------------------------------------+
 void CPanelDialog::DrawLabels()
   {
    ObjectsDeleteAll(0, prefix);
 
-   DrawPriceLabel(mM1, lblM1h, bufferM1BBh[0], "M1 BB Upper", UpperLineColor);
-   DrawPriceLabel(mM1, lblM1m, bufferM1BBm[0], "M1 BB Main", MainLineColor);
-   DrawPriceLabel(mM1, lblM1l, bufferM1BBl[0], "M1 BB Lower", LowerLineColor);
+   int sizeM1 = ArraySize(bufferM1BBh) - 1;
+   DrawPriceLabel(mM1, lblM1h, bufferM1BBh[sizeM1], "M1 BB Upper", UpperLineColor);
+   DrawPriceLabel(mM1, lblM1m, bufferM1BBm[sizeM1], "M1 BB Main", MainLineColor);
+   DrawPriceLabel(mM1, lblM1l, bufferM1BBl[sizeM1], "M1 BB Lower", LowerLineColor);
 
-   DrawPriceLabel(mM5, lblM5h, bufferM5BBh[0], "M5 BB Upper", UpperLineColor);
-   DrawPriceLabel(mM5, lblM5m, bufferM5BBm[0], "M5 BB Main", MainLineColor);
-   DrawPriceLabel(mM5, lblM5l, bufferM5BBl[0], "M5 BB Lower", LowerLineColor);
+   int sizeM5 = ArraySize(bufferM5BBh) - 1;
+   DrawPriceLabel(mM5, lblM5h, bufferM5BBh[sizeM5], "M5 BB Upper", UpperLineColor);
+   DrawPriceLabel(mM5, lblM5m, bufferM5BBm[sizeM5], "M5 BB Main", MainLineColor);
+   DrawPriceLabel(mM5, lblM5l, bufferM5BBl[sizeM5], "M5 BB Lower", LowerLineColor);
 
-   DrawPriceLabel(mM15, lblM15h, bufferM15BBh[0], "M15 BB Upper", UpperLineColor);
-   DrawPriceLabel(mM15, lblM15m, bufferM15BBm[0], "M15 BB Main", MainLineColor);
-   DrawPriceLabel(mM15, lblM15l, bufferM15BBl[0], "M15 BB Lower", LowerLineColor);
+   int sizeM15 = ArraySize(bufferM15BBh) - 1;
+   DrawPriceLabel(mM15, lblM15h, bufferM15BBh[sizeM15], "M15 BB Upper", UpperLineColor);
+   DrawPriceLabel(mM15, lblM15m, bufferM15BBm[sizeM15], "M15 BB Main", MainLineColor);
+   DrawPriceLabel(mM15, lblM15l, bufferM15BBl[sizeM15], "M15 BB Lower", LowerLineColor);
 
-   DrawPriceLabel(mM30, lblM30h, bufferM30BBh[0], "M30 BB Upper", UpperLineColor);
-   DrawPriceLabel(mM30, lblM30m, bufferM30BBm[0], "M30 BB Main", MainLineColor);
-   DrawPriceLabel(mM30, lblM30l, bufferM30BBl[0], "M30 BB Lower", LowerLineColor);
+   int sizeM30 = ArraySize(bufferM30BBh) - 1;
+   DrawPriceLabel(mM30, lblM30h, bufferM30BBh[sizeM30], "M30 BB Upper", UpperLineColor);
+   DrawPriceLabel(mM30, lblM30m, bufferM30BBm[sizeM30], "M30 BB Main", MainLineColor);
+   DrawPriceLabel(mM30, lblM30l, bufferM30BBl[sizeM30], "M30 BB Lower", LowerLineColor);
 
-   DrawPriceLabel(mH1, lblH1h, bufferH1BBh[0], "H1 BB Upper", UpperLineColor);
-   DrawPriceLabel(mH1, lblH1m, bufferH1BBm[0], "H1 BB Main", MainLineColor);
-   DrawPriceLabel(mH1, lblH1l, bufferH1BBl[0], "H1 BB Lower", LowerLineColor);
+   int sizeH1 = ArraySize(bufferH1BBh) - 1;
+   DrawPriceLabel(mH1, lblH1h, bufferH1BBh[sizeH1], "H1 BB Upper", UpperLineColor);
+   DrawPriceLabel(mH1, lblH1m, bufferH1BBm[sizeH1], "H1 BB Main", MainLineColor);
+   DrawPriceLabel(mH1, lblH1l, bufferH1BBl[sizeH1], "H1 BB Lower", LowerLineColor);
 
-   DrawPriceLabel(mH4, lblH4h, bufferH4BBh[0], "H4 BB Upper", UpperLineColor);
-   DrawPriceLabel(mH4, lblH4m, bufferH4BBm[0], "H4 BB Main", MainLineColor);
-   DrawPriceLabel(mH4, lblH4l, bufferH4BBl[0], "H4 BB Lower", LowerLineColor);
+   int sizeH4 = ArraySize(bufferH4BBh) - 1;
+   DrawPriceLabel(mH4, lblH4h, bufferH4BBh[sizeH4], "H4 BB Upper", UpperLineColor);
+   DrawPriceLabel(mH4, lblH4m, bufferH4BBm[sizeH4], "H4 BB Main", MainLineColor);
+   DrawPriceLabel(mH4, lblH4l, bufferH4BBl[sizeH4], "H4 BB Lower", LowerLineColor);
 
-   DrawPriceLabel(mD1, lblD1h, bufferD1BBh[0], "D1 Upper", UpperLineColor);
-   DrawPriceLabel(mD1, lblD1m, bufferD1BBm[0], "D1 Main", MainLineColor);
-   DrawPriceLabel(mD1, lblD1l, bufferD1BBl[0], "D1 Lower", LowerLineColor);
+   int sizeD1 = ArraySize(bufferD1BBh) - 1;
+   DrawPriceLabel(mD1, lblD1h, bufferD1BBh[sizeD1], "D1 Upper", UpperLineColor);
+   DrawPriceLabel(mD1, lblD1m, bufferD1BBm[sizeD1], "D1 Main", MainLineColor);
+   DrawPriceLabel(mD1, lblD1l, bufferD1BBl[sizeD1], "D1 Lower", LowerLineColor);
 
-   DrawPriceLabel(mW1, lblW1h, bufferW1BBh[0], "W1 BB Upper", UpperLineColor);
-   DrawPriceLabel(mW1, lblW1m, bufferW1BBm[0], "W1 BB Main", MainLineColor);
-   DrawPriceLabel(mW1, lblW1l, bufferW1BBl[0], "W1 BB Lower", LowerLineColor);
+   int sizeW1 = ArraySize(bufferW1BBh) - 1;
+   DrawPriceLabel(mW1, lblW1h, bufferW1BBh[sizeW1], "W1 BB Upper", UpperLineColor);
+   DrawPriceLabel(mW1, lblW1m, bufferW1BBm[sizeW1], "W1 BB Main", MainLineColor);
+   DrawPriceLabel(mW1, lblW1l, bufferW1BBl[sizeW1], "W1 BB Lower", LowerLineColor);
 
-   DrawPriceLabel(mMN1, lblMN1h, bufferMN1BBh[0], "MN1 BB Upper", UpperLineColor);
-   DrawPriceLabel(mMN1, lblMN1m, bufferMN1BBm[0], "MN1 BB Main", MainLineColor);
-   DrawPriceLabel(mMN1, lblMN1l, bufferMN1BBl[0], "MN1 BB Lower", LowerLineColor);
+   int sizeMN1 = ArraySize(bufferMN1BBh) - 1;
+   DrawPriceLabel(mMN1, lblMN1h, bufferMN1BBh[sizeMN1], "MN1 BB Upper", UpperLineColor);
+   DrawPriceLabel(mMN1, lblMN1m, bufferMN1BBm[sizeMN1], "MN1 BB Main", MainLineColor);
+   DrawPriceLabel(mMN1, lblMN1l, bufferMN1BBl[sizeMN1], "MN1 BB Lower", LowerLineColor);
   }
+
 //+------------------------------------------------------------------+
 //| Rest events handler                                                    |
 //+------------------------------------------------------------------+
@@ -402,7 +311,6 @@ bool CPanelDialog::OnDefault(const int id, const long &lparam, const double &dpa
 //+------------------------------------------------------------------+
 CPanelDialog ExtDialog;
 
-int handleMN1, handleW1, handleD1, handleH4, handleH1, handleM30, handleM15, handleM5, handleM1;
 
 double bufferMN1BBh[];
 double bufferMN1BBm[];
@@ -475,15 +383,6 @@ int OnInit()
 void OnDeinit(const int reason)
   {
    ObjectsDeleteAll(ChartID(), "MTF BBands");
-   IndicatorRelease(handleMN1);
-   IndicatorRelease(handleW1);
-   IndicatorRelease(handleD1);
-   IndicatorRelease(handleH4);
-   IndicatorRelease(handleH1);
-   IndicatorRelease(handleM30);
-   IndicatorRelease(handleM15);
-   IndicatorRelease(handleM5);
-   IndicatorRelease(handleM1);
 
    ExtDialog.Destroy(reason);
   }
@@ -502,39 +401,36 @@ int OnCalculate(const int       rates_total,
    if(rates_total < BBPeriod)
       return 0;
 
-   int begin = rates_total - BBPeriod;
-   if(prev_calculated > begin)
-      begin = prev_calculated - 1;
+   int start = BBPeriod - 1;
+   if(prev_calculated > start)
+      start = prev_calculated - 1;
 
-
-   for(int i = begin; i >= 0; i--)
+   for(int i = start; i < rates_total; i++)
      {
-      int barShift = iBarShift(_Symbol,PERIOD_H1,time[i],false);
-      double HTF_BUFFER[1];
-
-
-      CopyBuffer(handleM1,0,barShift,1,HTF_BUFFER);
-      bufferM1BBh[i] = HTF_BUFFER[0];
-
-      CopyBuffer(handleM1,1,barShift,1,HTF_BUFFER);
-      bufferM1BBm[i] = HTF_BUFFER[0];
-
-      CopyBuffer(handleM1,2,barShift,1,HTF_BUFFER);
-      bufferM1BBl[i] = HTF_BUFFER[0];
+      UpdateBuffers(i, PERIOD_MN1,  time[i], bufferMN1BBm, bufferMN1BBh, bufferMN1BBl);
+      UpdateBuffers(i, PERIOD_W1,   time[i], bufferW1BBm, bufferW1BBh, bufferW1BBl);
+      UpdateBuffers(i, PERIOD_D1,   time[i], bufferD1BBm, bufferD1BBh, bufferD1BBl);
+      UpdateBuffers(i, PERIOD_H4,   time[i], bufferH4BBm, bufferH4BBh, bufferH4BBl);
+      UpdateBuffers(i, PERIOD_H1,   time[i], bufferH1BBm, bufferH1BBh, bufferH1BBl);
+      UpdateBuffers(i, PERIOD_M30,  time[i], bufferM30BBm, bufferM30BBh, bufferM30BBl);
+      UpdateBuffers(i, PERIOD_M15,  time[i], bufferM15BBm, bufferM15BBh, bufferM15BBl);
+      UpdateBuffers(i, PERIOD_M5,   time[i], bufferM5BBm, bufferM5BBh, bufferM5BBl);
+      UpdateBuffers(i, PERIOD_M1,   time[i], bufferM1BBm, bufferM1BBh, bufferM1BBl);
      }
 
-
-
-   //CopyBuffer(handleM1, 12, 0, rates_total, bufferM1BBh);
-   //CopyBuffer(handleM1, 13, 0, rates_total, bufferM1BBm);
-   //CopyBuffer(handleM1, 14, 0, rates_total, bufferM1BBl);
-
    ExtDialog.DrawIndicatorsData();
-//--- return value of prev_calculated for next call
+
    return (rates_total);
   }
 //+------------------------------------------------------------------+
-//| ChartEvent function                                              |
+void UpdateBuffers(const int idx, const ENUM_TIMEFRAMES timeframe, const datetime currentCandleTime, double &middleBuffer[], double &upperBuffer[], double &lowerBuffer[])
+  {
+   int barShift = iBarShift(NULL,timeframe,currentCandleTime,false);
+   middleBuffer[idx] = CalculateSimpleMA(barShift,timeframe, BBPeriod);
+   double stdDeviation = CalculateStdDeviation(barShift, BBPeriod, timeframe, middleBuffer[idx]);
+   upperBuffer[idx] = middleBuffer[idx] + BBDeviations * stdDeviation;
+   lowerBuffer[idx] = middleBuffer[idx] - BBDeviations * stdDeviation;
+  }
 //+------------------------------------------------------------------+
 void OnChartEvent(const int     id,
                   const long   &lparam,
@@ -581,98 +477,16 @@ void InitBuffers()
    AddBuffer(24, bufferM1BBh, DRAW_NONE, UpperStyle, UpperLineWidth, UpperLineColor, "M1 BB Upper");
    AddBuffer(25, bufferM1BBm, DRAW_NONE, MainStyle, MainLineWidth, MainLineColor, "M1 BB Main");
    AddBuffer(26, bufferM1BBl, DRAW_NONE, LowerStyle, LowerLineWidth, LowerLineColor, "M1 BB Lower");
-
-   handleMN1 = iBands(_Symbol, PERIOD_MN1, BBPeriod, BBDeviations, BBShift, PRICE_CLOSE);
-   handleW1  = iBands(_Symbol, PERIOD_W1, BBPeriod, BBDeviations, BBShift, PRICE_CLOSE);
-   handleD1  = iBands(_Symbol, PERIOD_D1, BBPeriod, BBDeviations, BBShift, PRICE_CLOSE);
-   handleH4  = iBands(_Symbol, PERIOD_H4, BBPeriod, BBDeviations, BBShift, PRICE_CLOSE);
-   handleH1  = iBands(_Symbol, PERIOD_H1, BBPeriod, BBDeviations, BBShift, PRICE_CLOSE);
-   handleM30 = iBands(_Symbol, PERIOD_M30, BBPeriod, BBDeviations, BBShift, PRICE_CLOSE);
-   handleM15 = iBands(_Symbol, PERIOD_M15, BBPeriod, BBDeviations, BBShift, PRICE_CLOSE);
-   handleM5  = iBands(_Symbol, PERIOD_M5, BBPeriod, BBDeviations, BBShift, PRICE_CLOSE);
-   handleM1  = iBands(_Symbol, PERIOD_M1, BBPeriod, BBDeviations, BBShift, PRICE_CLOSE);
   }
-//+------------------------------------------------------------------+
-//|                                                                  |
 //+------------------------------------------------------------------+
 void AddBuffer(int idx, double &buffer[], int type, int style = STYLE_SOLID, int width = 1, color clr = clrNONE, string text = "")
   {
-   SetIndexBuffer(idx, buffer);
+   SetIndexBuffer(idx, buffer, INDICATOR_DATA);
+   PlotIndexSetInteger(idx, PLOT_DRAW_TYPE, DRAW_LINE);   
+   PlotIndexSetInteger(idx, PLOT_LINE_COLOR, clr);   
    PlotIndexSetInteger(idx, PLOT_LINE_STYLE, style);
    PlotIndexSetInteger(idx, PLOT_LINE_WIDTH, width);
    PlotIndexSetString(idx, PLOT_LABEL, text);
-  }
-//+------------------------------------------------------------------+
-int RunIndicators()
-  {
-   int limit;
-   int counted_bars = BarsCalculated(handleH1);
-
-   datetime tfMN1[], tfW1[], tfD1[], tfH4[], tfH1[], tfM30[], tfM15[], tfM5[], tfM1[];
-   int      iMN1 = 0, iW1 = 0, iD1 = 0, iH4 = 0, iH1 = 0, iM30 = 0, iM15 = 0, iM5 = 0, iM1 = 0;
-
-// Check for possible errors
-   if(counted_bars <= 0)
-      return (-1);
-
-// The last counted bar will be recounted
-   if(counted_bars > 0)
-      counted_bars--;
-
-// Copy time series for different timeframes
-   CopyTime(_Symbol, PERIOD_MN1, 0, Bars(_Symbol, PERIOD_MN1), tfMN1);
-   CopyTime(_Symbol, PERIOD_W1, 0, Bars(_Symbol, PERIOD_W1), tfW1);
-   CopyTime(_Symbol, PERIOD_D1, 0, Bars(_Symbol, PERIOD_D1), tfD1);
-   CopyTime(_Symbol, PERIOD_H4, 0, Bars(_Symbol, PERIOD_H4), tfH4);
-   CopyTime(_Symbol, PERIOD_H1, 0, Bars(_Symbol, PERIOD_H1), tfH1);
-   CopyTime(_Symbol, PERIOD_M30, 0, Bars(_Symbol, PERIOD_M30), tfM30);
-   CopyTime(_Symbol, PERIOD_M15, 0, Bars(_Symbol, PERIOD_M15), tfM15);
-   CopyTime(_Symbol, PERIOD_M5, 0, Bars(_Symbol, PERIOD_M5), tfM5);
-   CopyTime(_Symbol, PERIOD_M1, 0, Bars(_Symbol, PERIOD_M1), tfM1);
-
-   limit = Bars(_Symbol, _Period) - counted_bars;
-
-// Main loop
-   for(int i = 0; i < limit; i++)
-     {
-      // Update time frame indices based on the current bar time
-      // Your conditions for incrementing iMN1, iW1, etc. go here
-
-      // Calculate indicator values for different time frames
-      // You need to create handles for iBands (or any other indicator) outside this function and use CopyBuffer to get values
-      // Example: double value = 0.0; CopyBuffer(handle, bufferIndex, i, 1, &value); bufferMN1BBh[i] = value;
-      // Repeat this for all required buffers and time frames
-     }
-   return (0);
-  }
-//+------------------------------------------------------------------+
-bool FillArraysFromBuffers(double &base_values[],    // indicator buffer of the middle line of Bollinger Bands
-                           double &upper_values[],   // indicator buffer of the upper border
-                           double &lower_values[],   // indicator buffer of the lower border
-                           int     shift,            // shift
-                           int     ind_handle,       // handle of the iBands indicator
-                           int     amount            // number of copied values
-                          )
-  {
-   ResetLastError();
-   if(CopyBuffer(ind_handle, 13, -shift, amount, base_values) < 0)
-     {
-      PrintFormat("Failed to copy data from the iBands indicator, error code %d", GetLastError());
-      return (false);
-     }
-
-   if(CopyBuffer(ind_handle, 12, -shift, amount, upper_values) < 0)
-     {
-      PrintFormat("Failed to copy data from the iBands indicator, error code %d", GetLastError());
-      return (false);
-     }
-
-   if(CopyBuffer(ind_handle, 14, -shift, amount, lower_values) < 0)
-     {
-      PrintFormat("Failed to copy data from the iBands indicator, error code %d", GetLastError());
-      return (false);
-     }
-   return (true);
   }
 //+------------------------------------------------------------------+
 void DrawPriceLabel(bool show, int lblHwnd, double price, string text, color foreground, color background = clrLightGray)
@@ -709,10 +523,6 @@ void DrawPriceLabel(bool show, int lblHwnd, double price, string text, color for
          HLineCreate(0, hLineName, 0, price, LowerLineColor, LowerStyle, LowerLineWidth);
      }
   }
-//+------------------------------------------------------------------+
-
-//+------------------------------------------------------------------+
-//|                                                                  |
 //+------------------------------------------------------------------+
 void CPanelDialog::WriteIndicatorsData()
   {
@@ -819,5 +629,25 @@ string PriceToStr(double price)
    int    digits         = (int)SymbolInfoInteger(_Symbol, SYMBOL_DIGITS);
    string formattedPrice = DoubleToString(price, digits);
    return formattedPrice;
+  }
+//+------------------------------------------------------------------+
+double CalculateSimpleMA(const int barShift, const ENUM_TIMEFRAMES movingAverageTimeframe, const int movingAveragePeriod)
+  {
+   if(Period() > movingAverageTimeframe)
+      return EMPTY_VALUE;
+
+   double sum = 0.0;
+   for(int j = 0; j < movingAveragePeriod; j++)
+      sum += iClose(NULL, movingAverageTimeframe, barShift + j);
+   return sum / movingAveragePeriod;
+  }
+//+------------------------------------------------------------------+
+double CalculateStdDeviation(const int barShift, const int period, const ENUM_TIMEFRAMES timeframe, const double mean)
+  {
+   double std_dev=0.0;
+   for(int i=0; i<period; i++)
+      std_dev += MathPow(iClose(NULL,timeframe, barShift + i)-mean,2.0);
+   std_dev = MathSqrt(std_dev/period);
+   return(std_dev);
   }
 //+------------------------------------------------------------------+

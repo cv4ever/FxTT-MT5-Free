@@ -78,6 +78,34 @@ int OnInit()
    return INIT_SUCCEEDED;
   }
 //+------------------------------------------------------------------+
+// Function to check data availability and manage wait count
+bool IsDataAvailable(int &waitCount, const ENUM_TIMEFRAMES timeFramePeriod) {
+    if (iTime(Symbol(), timeFramePeriod, 0) != 0) {
+        Print("Data is now available");
+        return true;
+    }
+    
+    if (waitCount > 0) {
+        waitCount--;
+        Print("Waiting for data");
+    } else {
+        Print("Can't wait for data any longer");
+    }
+    
+    return false;
+}
+//+------------------------------------------------------------------+
+// OnCalculate event start
+int CalculateStartingLimit(int &waitCount, const int ratesTotal, const int prevCalculated, const ENUM_TIMEFRAMES timeFramePeriod) {
+    if (prevCalculated == 0 && !IsDataAvailable(waitCount, timeFramePeriod)) {
+        // If this is the first calculation and data is not available, just return prev_calculated
+        return prevCalculated;
+    }
+    
+    // Calculate the limit for processing data and proceed with other calculations
+    return ratesTotal - prevCalculated;
+}
+//+------------------------------------------------------------------+
 int OnCalculate(
    const int rates_total,
    const int prev_calculated,
@@ -91,9 +119,31 @@ int OnCalculate(
    const int &spread[])
   {
 
+   int limit = rates_total - prev_calculated;
+
+   static int waitCount = 10;
+   if(prev_calculated == 0)    // first time
+     {
+      if(waitCount > 0)
+        {
+         datetime t = iTime(Symbol(), tfperiod, 0);
+         int err = GetLastError();
+         if(t == 0)
+           {
+            waitCount--;
+            PrintFormat("Waiting for data");
+            return(prev_calculated);
+           }
+         PrintFormat("Data is now available");
+        }
+      else        
+         Print("Can't wait for data any longer");        
+     }
+
+
+
    int values_to_copy;
    int calculated = BarsCalculated(handle);
-
    if(calculated <= 0)
      {
       PrintFormat("BarsCalculated() returned %d, error code %d", calculated, GetLastError());
@@ -104,65 +154,25 @@ int OnCalculate(
       return(0);
 
 
-   int limit = rates_total - prev_calculated;
+   //int limit = rates_total - prev_calculated;
    if(prev_calculated > 0)
       limit++;
 
    values_to_copy = GetValuesToCopy(rates_total, prev_calculated, calculated);
    if(!FillArrayFromBuffer(iMABuffer, ma_shift, handle, values_to_copy))
       return 0;
-//1
-//if(!FillArrayFromBuffer(iMABuffer2, ma_shift, handle2, values_to_copy))
-//   return 0;
 
-//2
+
+
+
    double values[];
    if(!FillArrayFromBuffer(values, ma_shift, handle2, values_to_copy))
       return 0;
-
+ 
    ArraySetAsSeries(values, true);
    ArraySetAsSeries(iMABuffer2, true);
 
    ConvertTimeframe(values, iMABuffer2, PERIOD_H1, PERIOD_CURRENT);
-
-
-/*
-
-   int iH1 = 0;
-   datetime tfH1[]; // Ensure this array is declared at a global or local scope where you're using it
-   int copied = CopyTime(_Symbol, PERIOD_H1, 0, Bars(_Symbol, PERIOD_H1), tfH1);
-//Print(" -> copied:",copied);
-
-
-
-
-
-   double closeArray[];
-   int copyClose = CopyClose(_Symbol, PERIOD_H1, 0, Bars(_Symbol, PERIOD_H1), closeArray);
-   //int copyClose = CopySeries(NULL,PERIOD_H1,0,Bars(_Symbol, PERIOD_H1),COPY_RATES_CLOSE,closeArray);
-   if(copyClose <= 0)
-      PrintFormat("CopyClose() returned error code %d", copyClose, GetLastError());
-
-
-   ArrayInitialize(iMABuffer2,0);
-
-   ArraySetAsSeries(tfH1, true);
-   ArraySetAsSeries(time, true);
-   ArraySetAsSeries(closeArray, true);
-   ArraySetAsSeries(iMABuffer2, true);
-
-
-   for(int i=0; i<20; i++)     
-     {
-      iH1 = iBarShift(_Symbol, PERIOD_H1, time[i]);      
-      double sma = SimpleMA(iH1, ma_period, closeArray);
-      PrintFormat("iH1[%d] :: iMABuffer2[%d]:%f",iH1,i,sma);
-      iMABuffer2[i] = sma;
-     }
-
-
-*/
-
 
 
    Comment(StringFormat("%s ==>  Updated value in the indicator %s: %d", TimeToString(TimeCurrent(), TIME_DATE | TIME_SECONDS), short_name, values_to_copy));
@@ -262,5 +272,10 @@ void ConvertTimeframe(const double &srcPrices[], double &destPrices[], ENUM_TIME
          destPrices[i * conversionFactor + j] = srcPrices[i];
         }
      }
+  }
+//+------------------------------------------------------------------+
+bool IsTimeframeSupported(int sourceMinutes, int targetMinutes)
+  {
+   return sourceMinutes != -1 && targetMinutes != -1 && sourceMinutes % targetMinutes == 0;
   }
 //+------------------------------------------------------------------+
